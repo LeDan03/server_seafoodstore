@@ -38,7 +38,7 @@ public class User {
     @Column
     private String username;
 
-    @Column
+    @Column(columnDefinition = "VARCHAR(255) NOT NULL")
     private String password;
 
     @Column
