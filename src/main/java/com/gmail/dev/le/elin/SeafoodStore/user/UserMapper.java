@@ -24,6 +24,7 @@ public class UserMapper {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .phone(user.getPhoneNumber())
+                .roleName(user.getRole().getName())
                 .addresses(user.getAddresses() != null ? user.getAddresses().stream().map(addressMapper::toDto).toList() : null)
                 .build();
     }

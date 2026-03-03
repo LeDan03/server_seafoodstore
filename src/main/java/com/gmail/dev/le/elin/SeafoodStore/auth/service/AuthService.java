@@ -3,7 +3,7 @@ package com.gmail.dev.le.elin.SeafoodStore.auth.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.gmail.dev.le.elin.SeafoodStore.auth.AuthResult;
+import com.gmail.dev.le.elin.SeafoodStore.auth.LoginResult;
 import com.gmail.dev.le.elin.SeafoodStore.auth.dto.LoginRequest;
 import com.gmail.dev.le.elin.SeafoodStore.auth.dto.RegisterRequest;
 import com.gmail.dev.le.elin.SeafoodStore.exception.BadRequestException;
@@ -14,6 +14,7 @@ import com.gmail.dev.le.elin.SeafoodStore.refreshtoken.RefreshTokenRepository;
 import com.gmail.dev.le.elin.SeafoodStore.role.RoleService;
 import com.gmail.dev.le.elin.SeafoodStore.security.JwtService;
 import com.gmail.dev.le.elin.SeafoodStore.user.User;
+import com.gmail.dev.le.elin.SeafoodStore.user.UserMapper;
 import com.gmail.dev.le.elin.SeafoodStore.user.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,9 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+    private final UserMapper userMapper;
 
+    private final JwtService jwtService;
     private final RoleService roleService;
 
     public String hashPassword(String rawPassword) {
@@ -38,7 +40,7 @@ public class AuthService {
         return passwordEncoder.matches(rawPassword, hashedPassword);
     }
 
-    public AuthResult login(LoginRequest request) {
+    public LoginResult login(LoginRequest request) {
         User user = userRepository.findByPhoneNumber(request.getPhoneNumber())
                 .orElseThrow(() -> new ResourceNotFoundException("Thông tin đăng nhập không chính xác"));
 
@@ -51,9 +53,10 @@ public class AuthService {
 
         refreshTokenRepository.save(new RefreshToken(passwordEncoder.encode(refreshTokenRaw), user));
 
-        return AuthResult.builder()
+        return LoginResult.builder()
                 .accessToken(accessToken)
                 .refreshTokenRaw(refreshTokenRaw)
+                .user(userMapper.toDto(user))
                 .build();
     }
 

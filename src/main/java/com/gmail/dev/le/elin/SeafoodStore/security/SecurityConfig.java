@@ -68,7 +68,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "https://69a6b10bcc0945e92b7febbe--glittery-kheer-021850.netlify.app"));
+                "https://glittery-kheer-021850.netlify.app/"));
         config.setAllowedMethods(List.of("*"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
