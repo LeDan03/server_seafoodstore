@@ -30,6 +30,7 @@ public class SecurityConfig {
         http
                 // Tắt CSRF vì dùng JWT (stateless)
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 // Không dùng session
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
