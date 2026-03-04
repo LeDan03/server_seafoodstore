@@ -22,7 +22,7 @@ public class UserService {
 
     @PostConstruct
     private void initAdminAccount() {
-        if (!userRepository.existsById(1)) {
+        if (!userRepository.existsByPhoneNumber("0869518622")) {
             User admin = new User();
             Role adminRole = roleRepository.findByName("ROLE_ADMIN")
                     .orElseThrow(() -> new ResourceNotFoundException(
