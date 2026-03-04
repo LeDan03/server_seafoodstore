@@ -83,4 +83,9 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    Sha256RefreshEncoder refreshTokenEncoder() {
+        return new Sha256RefreshEncoder();
+    }
 }

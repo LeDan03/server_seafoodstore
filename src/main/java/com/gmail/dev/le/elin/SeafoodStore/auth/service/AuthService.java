@@ -13,6 +13,7 @@ import com.gmail.dev.le.elin.SeafoodStore.refreshtoken.RefreshToken;
 import com.gmail.dev.le.elin.SeafoodStore.refreshtoken.RefreshTokenRepository;
 import com.gmail.dev.le.elin.SeafoodStore.role.RoleService;
 import com.gmail.dev.le.elin.SeafoodStore.security.JwtService;
+import com.gmail.dev.le.elin.SeafoodStore.security.Sha256RefreshEncoder;
 import com.gmail.dev.le.elin.SeafoodStore.user.User;
 import com.gmail.dev.le.elin.SeafoodStore.user.UserMapper;
 import com.gmail.dev.le.elin.SeafoodStore.user.UserRepository;
@@ -27,6 +28,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     private final PasswordEncoder passwordEncoder;
+    private final Sha256RefreshEncoder sha256RefreshEncoder;
     private final UserMapper userMapper;
 
     private final JwtService jwtService;
@@ -51,7 +53,7 @@ public class AuthService {
         String accessToken = jwtService.generateAccessToken(user.getRole().getId(), user.getId(), user.getUsername());
         String refreshTokenRaw = jwtService.generateRefreshToken(user.getId());
 
-        refreshTokenRepository.save(new RefreshToken(passwordEncoder.encode(refreshTokenRaw), user));
+        refreshTokenRepository.save(new RefreshToken(sha256RefreshEncoder.encode(refreshTokenRaw), user));
 
         return LoginResult.builder()
                 .accessToken(accessToken)
