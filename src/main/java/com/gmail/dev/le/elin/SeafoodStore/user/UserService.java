@@ -25,8 +25,10 @@ public class UserService {
         if (!userRepository.existsById(1)) {
             User admin = new User();
             Role adminRole = roleRepository.findByName("ROLE_ADMIN")
-                    .orElseThrow(() -> new ResourceNotFoundException("Admin role not found. Please ensure it is initialized."));
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Admin role not found. Please ensure it is initialized."));
 
+            admin.setUsername("ADMIN");
             admin.setPhoneNumber("0869518622");
             admin.setEmail("elin.le.dev@gmail.com");
             admin.setPassword("$2a$10$56BKnNBs19zLyLdrBc9PjeO49/JPSnBGb346MlnMPNpydwfVCa4Se");
