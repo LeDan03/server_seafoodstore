@@ -87,14 +87,14 @@ public class AuthService {
 
     public void logout(String refreshTokenRaw) {
         String encodedToken = sha256RefreshEncoder.encode(refreshTokenRaw);
-        RefreshToken token = refreshTokenRepository.findByToken(encodedToken)
+        RefreshToken token = refreshTokenRepository.findByTokenHash(encodedToken)
                 .orElseThrow(() -> new ResourceNotFoundException("Refresh token không hợp lệ"));
         refreshTokenRepository.delete(token);
     }
 
     public String refreshAccessToken(String refreshTokenRaw) {
         String encoded = sha256RefreshEncoder.encode(refreshTokenRaw);
-        RefreshToken rf_token = refreshTokenRepository.findByToken(encoded)
+        RefreshToken rf_token = refreshTokenRepository.findByTokenHash(encoded)
                 .orElseThrow(() -> new UnauthorizedException("Refresh token không hợp lệ"));
 
         if(rf_token.getExpiryDate().isBefore(LocalDateTime.now())) {
