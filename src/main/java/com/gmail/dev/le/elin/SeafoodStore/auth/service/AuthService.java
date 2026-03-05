@@ -1,5 +1,8 @@
 package com.gmail.dev.le.elin.SeafoodStore.auth.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +12,7 @@ import com.gmail.dev.le.elin.SeafoodStore.auth.dto.RegisterRequest;
 import com.gmail.dev.le.elin.SeafoodStore.exception.BadRequestException;
 import com.gmail.dev.le.elin.SeafoodStore.exception.ConflictException;
 import com.gmail.dev.le.elin.SeafoodStore.exception.ResourceNotFoundException;
+import com.gmail.dev.le.elin.SeafoodStore.exception.UnauthorizedException;
 import com.gmail.dev.le.elin.SeafoodStore.refreshtoken.RefreshToken;
 import com.gmail.dev.le.elin.SeafoodStore.refreshtoken.RefreshTokenRepository;
 import com.gmail.dev.le.elin.SeafoodStore.role.RoleService;
@@ -47,7 +51,7 @@ public class AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException("Thông tin đăng nhập không chính xác"));
 
         if (!verifyPassword(request.getPassword(), user.getPassword())) {
-            throw new BadRequestException("Thông tin đăng nhập không chính xác");
+            throw new UnauthorizedException("Thông tin đăng nhập không chính xác");
         }
 
         String accessToken = jwtService.generateAccessToken(user.getRole().getId(), user.getId(), user.getUsername());
@@ -81,7 +85,24 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    public void revokeRefreshToken(String refreshTokenRaw) {
+    public void logout(String refreshTokenRaw) {
+        String encodedToken = sha256RefreshEncoder.encode(refreshTokenRaw);
+        RefreshToken token = refreshTokenRepository.findByToken(encodedToken)
+                .orElseThrow(() -> new ResourceNotFoundException("Refresh token không hợp lệ"));
+        refreshTokenRepository.delete(token);
+    }
+
+    public String refreshAccessToken(String refreshTokenRaw) {
+        String encoded = sha256RefreshEncoder.encode(refreshTokenRaw);
+        RefreshToken rf_token = refreshTokenRepository.findByToken(encoded)
+                .orElseThrow(() -> new UnauthorizedException("Refresh token không hợp lệ"));
+
+        if(rf_token.getExpiryDate().isBefore(LocalDateTime.now())) {
+            refreshTokenRepository.delete(rf_token);
+            throw new UnauthorizedException("Refresh token đã hết hạn");
+        }
         
+        User user = rf_token.getUser();
+        return jwtService.generateAccessToken(user.getRole().getId(), user.getId(), user.getUsername());
     }
 }
