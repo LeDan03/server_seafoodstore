@@ -1,5 +1,7 @@
 package com.gmail.dev.le.elin.SeafoodStore.category;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.gmail.dev.le.elin.SeafoodStore.exception.ResourceNotFoundException;
@@ -32,5 +34,9 @@ public class CategoryService {
             throw new ResourceNotFoundException("Không tìm thấy danh mục với id: " + id);
         }
         categoryRepository.deleteById(id);
+    }
+
+    public List<CategoryDto> findAll() {
+        return categoryMapper.toDtoList(categoryRepository.findAll());
     }
 }

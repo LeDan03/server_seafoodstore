@@ -19,8 +19,8 @@ public class CategoryMapper {
     }
 
     public List<CategoryDto> toDtoList(List<Category> categories) {
-        if (categories == null) {
-            return null;
+        if (categories == null || categories.isEmpty()) {
+            return List.of();
         }
         return categories.stream()
                 .map(this::toDto)

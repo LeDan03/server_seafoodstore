@@ -22,5 +22,7 @@ public class ProductRequest {
     private int MOQ;
     private int productTypeId;
 
+    private int categoryId;
+
     private List<ImageRequest> imageRequests;
 }

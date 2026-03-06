@@ -73,6 +73,6 @@ public class AuthController {
         @PostMapping("/register")
         public ResponseEntity<ApiResponse<String>> register(@RequestBody RegisterRequest registerRequest) {
                 authService.register(registerRequest);
-                return ResponseEntity.ok(ApiResponse.success(null, "Registration successful"));
+                return ResponseEntity.ok(ApiResponse.created(null, "Registration successful"));
         }
 }

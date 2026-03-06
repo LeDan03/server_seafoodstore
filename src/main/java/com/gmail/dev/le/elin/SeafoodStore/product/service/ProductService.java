@@ -1,4 +1,4 @@
-package com.gmail.dev.le.elin.SeafoodStore.product;
+package com.gmail.dev.le.elin.SeafoodStore.product.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,40 +30,20 @@ public class ProductService {
 
     private final ImageService imageService;
 
-    private final ProductTypeRepository productTypeRepository;
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
-    private final ProductTypeMapper productTypeMapper;
     private final ProductMapper productMapper;
 
-    public ProductTypeResponse createProductType(ProductTypeRequest request) {
-        if (request == null) {
-            throw new BadRequestException("Yêu cầu không hợp lệ");
-        }
-        if (productTypeRepository.existsByName(request.getName())) {
-            throw new ConflictException("Tên loại sản phẩm đã được tạo trước đó");
-        }
-        ProductType productType = new ProductType();
-        productType.setName(request.getName());
-        productType.setDescription(request.getDescription());
+    private final ProductTypeRepository productTypeRepository;
 
-        productTypeRepository.save(productType);
-
-        return productTypeMapper.toResponse(productType);
-    }
-
-    public List<ProductTypeResponse> findAllProductType() {
-        return productTypeMapper.toResponses(productTypeRepository.findAll());
-    }
-
-    public ProductResponse createProduct(ProductRequest request, int categoryId, int productTypeId) {
+    public ProductResponse createProduct(ProductRequest request) {
         if (request == null) {
             throw new BadRequestException("");
         }
-        Category category = categoryRepository.findById(categoryId)
+        Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException(""));
-        ProductType productType = productTypeRepository.findById(productTypeId)
+        ProductType productType = productTypeRepository.findById(request.getProductTypeId())
                 .orElseThrow(() -> new ResourceNotFoundException(""));
 
         Product product = new Product();
